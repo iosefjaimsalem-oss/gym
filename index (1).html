@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>GymTrack — Xeneize 💙💛</title>
+
+<!-- =============================================
+     PWA / WEB APP MANIFEST (inline)
+     Hace que se instale como app nativa en el celu
+============================================= -->
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22GymTrack%20Xeneize%22%2C%22short_name%22%3A%22GymTrack%22%2C%22description%22%3A%22Tu%20registro%20de%20entrenos%2C%20xeneize%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230a1628%22%2C%22theme_color%22%3A%22%230a1628%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fimages.unsplash.com%2Fphoto-1590487988256-9ed24133863e%3Ffm%3Djpg%26q%3D60%26w%3D192%26h%3D192%26auto%3Dformat%26fit%3Dcrop%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Fimages.unsplash.com%2Fphoto-1590487988256-9ed24133863e%3Ffm%3Djpg%26q%3D80%26w%3D512%26h%3D512%26auto%3Dformat%26fit%3Dcrop%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fjpeg%22%7D%5D%7D"/>
+
+<!-- iOS: pantalla completa sin barra del navegador -->
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="GymTrack"/>
+
+<!-- Ícono para iPhone (pantalla de inicio) -->
+<link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1590487988256-9ed24133863e?fm=jpg&q=80&w=180&h=180&auto=format&fit=crop"/>
+
+<!-- Color de la barra del sistema Android -->
+<meta name="theme-color" content="#0a1628"/>
+
+<!-- OG preview si compartís el link -->
+<meta property="og:title" content="GymTrack Xeneize"/>
+<meta property="og:description" content="Tu registro de entrenos, xeneize 💙💛"/>
+<meta property="og:image" content="https://images.unsplash.com/photo-1590487988256-9ed24133863e?fm=jpg&q=60&w=600&auto=format&fit=crop"/>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap');
+:root{
+  --bg:#0a1628;
+  --surface:#0f1f3d;
+  --surface-2:#162848;
+  --border:#1e3560;
+  --text:#f5f0dc;
+  --text-muted:#6b7fa3;
+  --gold:#f5c800;
+  --gold-dim:#3a3000;
+  --blue:#003580;
+  --blue-light:#1a4a9f;
+  --gym-day:#f5c800;
+  --radius:16px;
+  --font-head:'Bebas Neue',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  /* Safe area para notch de iPhone */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:calc(var(--safe-top) + 20px) 14px calc(var(--safe-bottom) + 48px);
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Franja diagonal Boca estilo */
+body::before{
+  content:'';
+  position:fixed;
+  top:-20%;left:-10%;
+  width:120%;height:60%;
+  background:linear-gradient(180deg,var(--blue) 0%,var(--blue) 42%,var(--gold) 42%,var(--gold) 48%,var(--blue) 48%,var(--blue) 100%);
+  opacity:.06;
+  transform:rotate(-8deg);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* =============================================
+   HEADER con foto de fondo
+============================================= */
+header{
+  width:100%;
+  max-width:420px;
+  position:relative;
+  z-index:1;
+  margin-bottom:22px;
+  border-radius:var(--radius);
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+
+.header-photo{
+  position:relative;
+  padding:22px 16px 18px;
+}
+
+/* Foto de fondo del gym */
+.header-photo::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:url('https://images.unsplash.com/photo-1590487988256-9ed24133863e?fm=jpg&q=60&w=800&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center 30%;
+  z-index:0;
+}
+
+/* Gradiente oscuro sobre la foto para legibilidad */
+.header-photo::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    135deg,
+    rgba(10,22,40,.92) 0%,
+    rgba(10,22,40,.75) 40%,
+    rgba(0,53,128,.65) 100%
+  );
+  z-index:1;
+}
+
+/* Franja dorada sutil en el header */
+.header-stripe{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--blue),var(--gold),transparent);
+  z-index:3;
+}
+
+.header-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  z-index:2;
+}
+
+.crest{
+  width:54px;height:54px;
+  background:var(--blue-light);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;
+  border:3px solid var(--gold);
+  box-shadow:0 0 20px rgba(245,200,0,.3),0 0 6px rgba(245,200,0,.15) inset;
+  flex-shrink:0;
+}
+
+.logo-right{text-align:right}
+.logo-title{
+  font-family:var(--font-head);
+  font-size:2.2rem;
+  letter-spacing:2px;
+  color:var(--gold);
+  line-height:.9;
+  text-shadow:0 0 24px rgba(245,200,0,.5),0 2px 4px rgba(0,0,0,.8);
+}
+.logo-sub{
+  font-size:.62rem;
+  color:rgba(245,200,0,.7);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  margin-top:5px;
+  text-shadow:0 1px 3px rgba(0,0,0,.8);
+}
+
+/* Stats mini dentro del header */
+.header-mini-stats{
+  display:flex;
+  gap:16px;
+  margin-top:14px;
+  position:relative;
+  z-index:2;
+  padding-top:12px;
+  border-top:1px solid rgba(245,200,0,.15);
+}
+.mini-stat{text-align:center;flex:1}
+.mini-stat-num{
+  font-family:var(--font-head);
+  font-size:1.5rem;
+  color:var(--gold);
+  line-height:1;
+  text-shadow:0 0 12px rgba(245,200,0,.4),0 2px 4px rgba(0,0,0,.8);
+}
+.mini-stat-label{
+  font-size:.58rem;
+  color:rgba(245,200,0,.55);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-top:2px;
+  text-shadow:0 1px 3px rgba(0,0,0,.8);
+}
+.mini-divider{width:1px;background:rgba(245,200,0,.15);align-self:stretch}
+
+/* =============================================
+   OBJETIVO
+============================================= */
+.goal-card{
+  width:100%;max-width:420px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 18px;
+  margin-bottom:14px;
+  position:relative;z-index:1;
+  overflow:hidden;
+}
+.goal-card::before{
+  content:'⚽';
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  font-size:3rem;opacity:.06;
+}
+.goal-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.goal-label{font-family:var(--font-head);font-size:.95rem;letter-spacing:1px;color:var(--text-muted)}
+.goal-count{font-family:var(--font-head);font-size:1.3rem;color:var(--gold)}
+.bar-track{background:var(--surface-2);border-radius:99px;height:6px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue-light),var(--gold));border-radius:99px;transition:width .5s ease;box-shadow:0 0 8px rgba(245,200,0,.4)}
+.goal-msg{margin-top:10px;font-size:.82rem;color:var(--text-muted);font-weight:600}
+
+/* =============================================
+   CALENDARIO
+============================================= */
+.calendar-card{
+  width:100%;max-width:420px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  position:relative;z-index:1;
+}
+.cal-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 12px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--surface-2),var(--surface));
+}
+.cal-month-title{font-family:var(--font-head);font-size:1.4rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase}
+.nav-btn{
+  background:var(--blue);border:1px solid var(--blue-light);
+  border-radius:8px;width:34px;height:34px;
+  cursor:pointer;color:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s ease;font-family:var(--font-head);font-size:1.1rem;
+}
+.nav-btn:hover{background:var(--gold);color:var(--blue);border-color:var(--gold)}
+
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);padding:10px 10px 4px;background:var(--blue)}
+.cal-weekday{text-align:center;font-size:.65rem;color:var(--gold);text-transform:uppercase;font-family:var(--font-head);letter-spacing:1px}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:6px 10px 16px}
+.cal-day{
+  aspect-ratio:1;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;font-weight:700;
+  cursor:pointer;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  border:1px solid transparent;
+  font-family:var(--font-body);
+  -webkit-tap-highlight-color:transparent;
+}
+.cal-day:not(.empty):not(.gym-day):not(.future):hover{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.cal-day.empty{opacity:0;pointer-events:none}
+.cal-day.today{border-color:var(--gold)!important;background:rgba(245,200,0,.08)}
+.cal-day.gym-day{
+  background:var(--gold);color:var(--blue);
+  border-color:var(--gold);
+  box-shadow:0 0 12px rgba(245,200,0,.4);
+  font-weight:800;
+}
+@keyframes pop{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.3) rotate(-3deg)}
+  100%{transform:scale(1)}
+}
+.cal-day.gym-day.popping{animation:pop .35s ease}
+.cal-day.future{color:var(--border);pointer-events:none}
+.cal-day.past:not(.gym-day){color:var(--text-muted)}
+
+/* =============================================
+   LEYENDA
+============================================= */
+.legend{
+  width:100%;max-width:420px;
+  display:flex;gap:16px;justify-content:center;
+  margin-top:16px;flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--text-muted)}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.legend-dot.gym{background:var(--gold)}
+.legend-dot.today{background:rgba(245,200,0,.08);border:1px solid var(--gold)}
+.legend-dot.normal{background:var(--surface);border:1px solid var(--border)}
+
+/* =============================================
+   TOAST
+============================================= */
+#toast{
+  position:fixed;bottom:calc(var(--safe-bottom) + 20px);left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--gold);color:var(--blue);
+  padding:10px 22px;border-radius:99px;
+  font-size:.85rem;font-weight:800;
+  font-family:var(--font-head);letter-spacing:1px;
+  box-shadow:0 4px 20px rgba(245,200,0,.4);
+  z-index:999;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;pointer-events:none;
+  white-space:nowrap;
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* =============================================
+   BANNER INSTALAR APP (solo se muestra si aplica)
+============================================= */
+#install-banner{
+  width:100%;max-width:420px;
+  background:linear-gradient(135deg,var(--blue-light),var(--blue));
+  border:1px solid var(--gold);
+  border-radius:12px;
+  padding:12px 16px;
+  margin-bottom:14px;
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  position:relative;z-index:1;
+}
+#install-banner.visible{display:flex}
+.install-text{font-size:.82rem;color:var(--gold);font-weight:600}
+.install-text span{display:block;font-size:.68rem;color:rgba(245,200,0,.6);margin-top:2px}
+.install-btn{
+  background:var(--gold);color:var(--blue);
+  border:none;border-radius:8px;
+  padding:8px 14px;
+  font-family:var(--font-head);font-size:.85rem;letter-spacing:1px;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:all .2s ease;
+}
+.install-btn:hover{background:#ffe040}
+.install-close{
+  background:none;border:none;color:rgba(245,200,0,.4);
+  cursor:pointer;font-size:1.1rem;padding:0 0 0 4px;flex-shrink:0;
+}
+</style>
+</head>
+<body>
+
+<!-- BANNER INSTALAR APP (Android/Chrome) -->
+<div id="install-banner">
+  <div class="install-text">
+    📲 Instalá GymTrack como app
+    <span>Guardala en tu pantalla de inicio</span>
+  </div>
+  <button class="install-btn" id="install-btn">INSTALAR</button>
+  <button class="install-close" id="install-close">✕</button>
+</div>
+
+<!-- HEADER CON FOTO -->
+<header>
+  <div class="header-photo">
+    <div class="header-inner">
+      <div class="crest">🏆</div>
+      <div class="logo-right">
+        <div class="logo-title">GYMTRACK</div>
+        <div class="logo-sub">Xeneize en el gym 💙💛</div>
+      </div>
+    </div>
+    <div class="header-mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-num" id="stat-week">0</div>
+        <div class="mini-stat-label">Semana</div>
+      </div>
+      <div class="mini-divider"></div>
+      <div class="mini-stat">
+        <div class="mini-stat-num" id="stat-month">0</div>
+        <div class="mini-stat-label">Mes</div>
+      </div>
+      <div class="mini-divider"></div>
+      <div class="mini-stat">
+        <div class="mini-stat-num" id="stat-year">0</div>
+        <div class="mini-stat-label">Año</div>
+      </div>
+    </div>
+    <div class="header-stripe"></div>
+  </div>
+</header>
+
+<!-- OBJETIVO -->
+<div class="goal-card">
+  <div class="goal-row">
+    <span class="goal-label">OBJETIVO DEL MES</span>
+    <span class="goal-count" id="goal-count">0/15</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill" id="goal-bar" style="width:0%"></div></div>
+  <div class="goal-msg" id="goal-msg"></div>
+</div>
+
+<!-- CALENDARIO -->
+<div class="calendar-card">
+  <div class="cal-nav">
+    <button class="nav-btn" id="btn-prev">←</button>
+    <span class="cal-month-title" id="cal-title"></span>
+    <button class="nav-btn" id="btn-next">→</button>
+  </div>
+  <div class="cal-weekdays">
+    <span class="cal-weekday">L</span><span class="cal-weekday">M</span><span class="cal-weekday">X</span>
+    <span class="cal-weekday">J</span><span class="cal-weekday">V</span><span class="cal-weekday">S</span><span class="cal-weekday">D</span>
+  </div>
+  <div class="cal-grid" id="cal-grid"></div>
+</div>
+
+<!-- LEYENDA -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot gym"></div>Fui al gym</div>
+  <div class="legend-item"><div class="legend-dot today"></div>Hoy</div>
+  <div class="legend-item"><div class="legend-dot normal"></div>Sin marcar</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* =============================================
+   LÓGICA PRINCIPAL
+============================================= */
+const GOAL=15, KEY='gymtrack_days';
+const today=new Date();
+let viewYear=today.getFullYear(), viewMonth=today.getMonth();
+let gymDays=new Set();
+
+function load(){try{const r=localStorage.getItem(KEY);gymDays=r?new Set(JSON.parse(r)):new Set()}catch{gymDays=new Set()}}
+function save(){localStorage.setItem(KEY,JSON.stringify([...gymDays]))}
+function toKey(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+function dow(d){return(d.getDay()+6)%7}
+function weekStart(){const d=new Date(today);d.setHours(0,0,0,0);d.setDate(d.getDate()-dow(d));return d}
+
+const months=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+
+function render(){
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+  document.getElementById('cal-title').textContent=`${months[viewMonth]} ${viewYear}`;
+  const first=new Date(viewYear,viewMonth,1);
+  const total=new Date(viewYear,viewMonth+1,0).getDate();
+  const start=dow(first);
+  const todayKey=toKey(today.getFullYear(),today.getMonth(),today.getDate());
+  for(let i=0;i<start;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e)}
+  for(let d=1;d<=total;d++){
+    const key=toKey(viewYear,viewMonth,d);
+    const cell=document.createElement('div');
+    cell.className='cal-day';cell.textContent=d;cell.dataset.key=key;
+    if(key===todayKey)cell.classList.add('today');
+    if(gymDays.has(key))cell.classList.add('gym-day');
+    if(key<todayKey)cell.classList.add('past');
+    if(key>todayKey)cell.classList.add('future');
+    if(key<=todayKey)cell.addEventListener('click',()=>toggle(cell,key));
+    grid.appendChild(cell);
+  }
+}
+
+let toastT;
+function toast(txt){
+  const t=document.getElementById('toast');
+  t.textContent=txt;t.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function toggle(cell,key){
+  if(gymDays.has(key)){
+    gymDays.delete(key);cell.classList.remove('gym-day','popping');
+    toast('Día desmarcado');
+  }else{
+    gymDays.add(key);cell.classList.add('gym-day','popping');
+    cell.addEventListener('animationend',()=>cell.classList.remove('popping'),{once:true});
+    toast('¡GOOOL! Entreno marcado 💙💛');
+  }
+  save();stats();
+}
+
+function stats(){
+  const ws=weekStart(),we=new Date(ws);we.setDate(we.getDate()+6);
+  const ry=today.getFullYear(),rm=today.getMonth()+1;
+  let w=0,m=0,y=0;
+  gymDays.forEach(k=>{
+    const[a,b,c]=k.split('-').map(Number);
+    const d=new Date(a,b-1,c);
+    if(d>=ws&&d<=we)w++;
+    if(a===ry&&b===rm)m++;
+    if(a===ry)y++;
+  });
+  document.getElementById('stat-week').textContent=w;
+  document.getElementById('stat-month').textContent=m;
+  document.getElementById('stat-year').textContent=y;
+  const pct=Math.min(100,Math.round(m/GOAL*100));
+  document.getElementById('goal-bar').style.width=pct+'%';
+  document.getElementById('goal-count').textContent=`${m}/${GOAL}`;
+  const left=GOAL-m;
+  document.getElementById('goal-msg').textContent=
+    m>=GOAL?'🔥 ¡OBJETIVO CUMPLIDO, XENEIZE! La Bombonera te espera.':
+    left===1?'⚡ ¡UN DÍA MÁS! Terminala como el Boca de los finales.':
+    left<=3?`⚡ Solo ${left} más. Como el Boca de los finales.`:
+    `💙 Dale campeón, te faltan ${left} días. El esfuerzo es Boca.`;
+}
+
+document.getElementById('btn-prev').onclick=()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--}render();stats()};
+document.getElementById('btn-next').onclick=()=>{
+  if(viewYear===today.getFullYear()&&viewMonth===today.getMonth())return;
+  viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++}render();stats();
+};
+
+/* =============================================
+   PWA: BANNER DE INSTALACIÓN (Android/Chrome)
+   En iPhone se instala desde Safari → compartir
+============================================= */
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  document.getElementById('install-banner').classList.add('visible');
+});
+
+document.getElementById('install-btn').addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  document.getElementById('install-banner').classList.remove('visible');
+  if(outcome==='accepted')toast('¡App instalada! 💙💛');
+});
+
+document.getElementById('install-close').addEventListener('click',()=>{
+  document.getElementById('install-banner').classList.remove('visible');
+});
+
+/* Detectar si ya está instalada como PWA */
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-banner').classList.remove('visible');
+  toast('¡GymTrack instalada! 🔵🟡');
+});
+
+/* =============================================
+   INIT
+============================================= */
+load();render();stats();
+</script>
+</body>
+</html>
